@@ -8,6 +8,14 @@ class Play extends Phaser.Scene {
         this.demonSpawnDelay = 2500
         this.demonSpeed = -450
         this.demonSpeedMax = -1000
+
+        this.jumpVelocity = 600;     //initial velocity
+        this.hold_max = 500;     //hold time
+        this.accel = 900;        //accelerator
+        this.shortener = 0.5;    //cut short jump
+
+        this.isJumping = false;
+        this.holdTime = 0;
         
         this.level = 0
         this.hardMODElevel = 30
@@ -18,6 +26,7 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+
         this.bgm = this.sound.add('track', {
             mute: false,
             volume: 1,
@@ -32,15 +41,36 @@ class Play extends Phaser.Scene {
         this.player.destroyed = false
         this.player.setBlendMode('SCREEN')
 
-        cursors = this.input.keyboard.createCursorKeys()
+        this.cursors = this.input.keyboard.createCursorKeys()
     }
 
-    update() {
+    update(time, delta) {
         if (!this.player.destroyed) {
-            if(cursors.up.isDown && this.player.body.onFloor()) {
-                this.player.setVelocityY(-330)
+
+            const up = this.cursors.up;
+
+            // jump starts
+            if (Phaser.Input.Keyboard.JustDown(up) && this.player.body.onFloor()) {
+                this.player.setVelocityY(-this.jumpVelocity);
+                this.isJumping = true;
+                this.holdTime = 0;
             }
-            this.physics.world.collide(this.player)
+
+            // add height while holding until can't be held any longer
+            if (this.isJumping && up.isDown && this.holdTime < this.hold_max && this.player.body.velocity.y < 0) {
+                this.player.setVelocityY(this.player.body.velocity.y - this.accel * delta / 1000);
+                this.holdTime += delta;
+            }
+
+            // JustUp triggers when UP is released
+            if (Phaser.Input.Keyboard.JustUp(up) && this.player.body.velocity.y < 0) {
+                this.player.setVelocityY(this.player.body.velocity.y * this.shortener);
+                this.isJumping = false;
+            }
+
+            if (this.player.body.onFloor()) {
+                this.isJumping = false;
+            }
         }
     }
 }
