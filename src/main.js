@@ -1,6 +1,6 @@
 // G. Spencer Barkman
 // Run Like Hell!
-// Time Spent: 3 Hours
+// Time Spent: 4 Hours
 // **Citations**
 // **Creative Tilt
 
@@ -11,6 +11,7 @@ let config = {
     type: Phaser.AUTO,
     height: 640,
     width: 960,
+    pixelArt: true,
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
@@ -20,11 +21,11 @@ let config = {
             debug: true,
             gravity: {
                 x: 0,
-                y: 350
+                y: 1500
             }
         }
     },
-    scene: [ Load, Title, Play ]
+    scene: [ Load, Title, Play, GameOver ]
 }
 
 //localStorage.clear()
@@ -39,5 +40,5 @@ let h = game.config.height
 const textSpacer = 64
 
 let highScore 
-let newHighSore = false 
+let newHighScore = false 
 let cursors

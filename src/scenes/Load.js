@@ -20,6 +20,28 @@ class Load extends Phaser.Scene {
         
         this.load.image('test', 'test.png')
 
+        this.load.spritesheet('player', 'Armand.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        })
+
+        this.load.spritesheet('demon', 'Demon.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        })
+
+        this.load.spritesheet('paraDemon', 'ParaDemon.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        })
+
+        this.load.image('clouds', 'clouds.png')
+        this.load.image('sky', 'sky.png')
+        this.load.image('far', 'far.png')
+        this.load.image('close', 'close.png')
+        this.load.image('flame', 'flame.png')
+        this.load.image('smoke', 'smoke.png')
+
         this.load.audio('track', ['backgroundmusic.mp3'])
 
     }
