@@ -1,7 +1,9 @@
 class Demon extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, velocity, demonHeight, demonWidth) {
 
-        super(scene, game.config.width - demonWidth, game.config.height - 24, 'demon')
+        let scaler = Phaser.Math.Between(2, 4)
+
+        super(scene, 0, 0, 'demon')
 
         this.parentScene = scene
 
@@ -10,10 +12,15 @@ class Demon extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(velocity)
         this.body.setAllowGravity(false);
 
-        this.scaleY = 2
-        this.scaleX = 2
+        
+
+        this.scaleY = scaler
+        this.scaleX = scaler
 
         this.play('demonRun')
+
+        this.setOrigin(0.5, 1)
+        this.setPosition(game.config.width, game.config.height)
 
         this.newDemon = true
 
@@ -22,8 +29,16 @@ class Demon extends Phaser.Physics.Arcade.Sprite {
     update() {
 
         if(this.newDemon && this.x < centerX) {
-            this.parentScene.addDemon(this.parent, this.velocity)
+
             this.newDemon = false
+            
+            if (Math.random() < 0.6) {
+                this.parentScene.addDemon(this.parent, this.velocity)
+            } else {
+                this.parentScene.time.delayedCall(3000, () => {
+                    this.parentScene.addDemon(this.parent, this.velocity)
+                });
+            }  
         }
 
         if (this.x < -this.width) { 

@@ -25,9 +25,7 @@ class Play extends Phaser.Scene {
         this.holdTime = 0;
         
         this.level = 0
-        this.hardMODElevel = 30
-        this.extremeMODElevel = 60
-        this.extremeMODE = false
+        this.extremeMODElevel = 30
 
     }
 
@@ -79,12 +77,12 @@ class Play extends Phaser.Scene {
         this.player.play('run')
 
         this.anims.create({
-            key: 'demonRun',
-            frameRate: 8,
+            key: 'skellyRun',
+            frameRate: 12,
             repeat: -1,
-            frames: this.anims.generateFrameNumbers('demon', {
+            frames: this.anims.generateFrameNumbers('skelly', {
                 start: 0,
-                end: 3
+                end: 1
             })
         })
 
@@ -95,6 +93,16 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('demon', {
                 start: 0,
                 end: 3
+            })
+        })
+
+        this.anims.create({
+            key: 'demonFly',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('paraDemon', {
+                start: 0,
+                end: 2
             })
         })
         
@@ -159,6 +167,7 @@ class Play extends Phaser.Scene {
                 this.player.setVelocityY(-this.jumpVelocity);
                 this.isJumping = true;
                 this.holdTime = 0;
+                this.sound.play('jump', {volume: 0.5})
 
             }
 
@@ -187,7 +196,7 @@ class Play extends Phaser.Scene {
         this.level++
 
         if (this.level % 5 == 0) {
-            //sounds to signal speed up
+            this.sound.play('levelUp', {volume: 0.25})
 
             if (this.demonSpeed >= this.demonSpeedMax) {
                 this.demonSpeed -= 25
@@ -199,26 +208,47 @@ class Play extends Phaser.Scene {
             }
         }
 
-        if (this.level == this.hardMODElevel) {
-
-        }
-
         if (this.level == this.extremeMODElevel) {
+            
+            let pBounds = this.player.getBounds()
+            let deathEmitter = this.add.particles(0, 0, 'flame', {
+                tint: { min: 0xff6600, max: 0xffcc00 },
+                alpha: {start: 1, end: 0},
+                scale: {start: 0.75, end: 0},
+                speed: {min: -50, max: 50},
+                lifespan: 2000,
+                blendMode: 'ADD',
+                emitZone: {
+                    source: new Phaser.Geom.Rectangle(pBounds.x, pBounds.y, pBounds.width, pBounds.height),
+                    type: 'edge',
+                    quantity: 10
+                }
+            })
 
+            deathEmitter.explode(100)
+            this.sound.play('scream', {volume: 0.50})
+            this.sound.play('skinned', {volume: 1})
+
+            this.extremeMODE = true
+
+            this.player.setTexture('skelly')
+            this.player.play('skellyRun', true)
+            
         }
     }
 
     playerCollision() {
         this.player.destroyed = true
         this.difficultyTimer.destroy()
-        // *** this.sound.play('death', {volume: 0.25})
+        this.sound.play('scream', {volume: 0.50})
+        this.sound.play('death', {volume: 1})
         this.cameras.main.shake(2500, 0.0075)
 
         this.tweens.add({
             targets: this.bgm,
             volume: 0,
             ease: 'Linear',
-            duration: 2000
+            duration: 1000
         })
 
         let pBounds = this.player.getBounds()

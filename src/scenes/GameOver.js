@@ -34,7 +34,7 @@ class GameOver extends Phaser.Scene {
         }
 
         this.add.text(centerX, centerY, `This Escape Attempt Lasted: ${this.level}s`, {
-            fontSize: '48px'
+            fontSize: '40px'
         }).setOrigin(0.5)
         this.add.text(centerX, centerY + textSpacer, `This Browser's Best: ${highScore}s`, {
             fontSize: '32px'
